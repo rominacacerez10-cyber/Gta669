@@ -19,10 +19,13 @@ jobs:
         run: npm install
 
       - name: Render video with Remotion
-        run: npm run build
+        run: npx remotion render GTAVI-HypeVideo out/video.mp4 --overwrite
+
+      - name: Verify file exists
+        run: ls -la out/
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
-          name: video-mp4
+          name: gta6-hype-video
           path: out/video.mp4
