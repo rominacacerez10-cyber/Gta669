@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "npx remotion render src/index.ts GTAVI-HypeVideo out/video.mp4 --overwrite --force"
+    "build": "npx remotion render src/index.ts GTAVI-HypeVideo out/video.mp4 --overwrite --gl=angle"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.0",
