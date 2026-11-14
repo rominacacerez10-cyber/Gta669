@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "remotion render GTAVI-HypeVideo out/video.mp4 --overwrite --verbose"
+    "build": "remotion render GTAVI-HypeVideo out/video.mp4 --overwrite --force"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.0",
