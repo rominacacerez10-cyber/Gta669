@@ -1,129 +1,162 @@
-import { AbsoluteFill, Composition, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Composition, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 
-const GTAVIHypeVideo = () => {
+const ComparisonVideo = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // --- ESCENA 1 (Frames 0 - 210) ---
-  const opacity1 = interpolate(frame, [0, 15, 195, 210], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const scale1 = spring({ frame, fps, config: { damping: 12 } });
-  const currentYear = Math.floor(interpolate(frame, [0, 210], [2013, 2026], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  // --- ANIMACIONES Y TRAYECTORIAS (500 frames / ~16.5s) ---
+  // Altura del dinero de Obsesión (crece de forma exponencial)
+  const obsessionMoneyHeight = interpolate(frame, [0, 100, 300, 500], [10, 80, 280, 520], { extrapolateRight: "clamp" });
+  
+  // Batería de Motivación (baja de 100% a 0%)
+  const motivationBattery = Math.floor(interpolate(frame, [0, 250, 350], [100, 15, 0], { extrapolateRight: "clamp" }));
 
-  // --- ESCENA 2 (Frames 210 - 450) ---
-  const opacity2 = interpolate(frame, [210, 225, 435, 450], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const zoom2 = interpolate(frame, [210, 450], [1.0, 1.15], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  // Posición y estados de Ego (se relaja y cae hacia atrás)
+  const egoRecline = interpolate(frame, [100, 180], [0, 25], { extrapolateRight: "clamp" });
 
-  // --- ESCENA 3 (Frames 450 - 690) ---
-  const opacity3 = interpolate(frame, [450, 465, 675, 690], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-
-  // --- ESCENA 4 (Frames 690 - 900) ---
-  const opacity4 = interpolate(frame, [690, 705, 885, 900], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const scale4 = spring({ frame: frame - 690, fps, config: { damping: 10 } });
+  // Progreso global de las gráficas superiores
+  const graphProgress = interpolate(frame, [0, 500], [0, 100], { extrapolateRight: "clamp" });
 
   return (
     <AbsoluteFill style={{
       backgroundColor: "#0B0B14",
-      width: 1920,
-      height: 1080,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
+      width: 1080,
+      height: 1920,
       fontFamily: "Arial, sans-serif",
-      color: "#FFFFFF",
+      color: "#FFF",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: "60px 40px",
       overflow: "hidden",
     }}>
       
-      {/* ESCENA 1 */}
-      <div style={{
-        position: "absolute",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: opacity1,
-        transform: `scale(${scale1})`,
-        pointerEvents: "none",
-      }}>
-        <p style={{ fontSize: 32, color: "#05D9E8", letterSpacing: "4px", fontWeight: "bold", margin: 0 }}>
-          13 AÑOS DE ESPERA...
-        </p>
-        <h1 style={{ fontSize: 130, color: "#FF2A6D", margin: "15px 0", textShadow: "6px 6px #05D9E8", fontWeight: "900" }}>
-          {currentYear}
-        </h1>
-        <p style={{ fontSize: 40, textTransform: "uppercase", fontWeight: "bold", margin: 0 }}>
-          El Rey Está De Regreso
-        </p>
+      {/* --- CABECERA PRINCIPAL --- */}
+      <h1 style={{ fontSize: 52, fontWeight: "900", color: "#FFF", textAlign: "center", letterSpacing: "2px", marginBottom: 10 }}>
+        EGO <span style={{ color: "#555" }}>VS</span> MOTIVACIÓN <span style={{ color: "#555" }}>VS</span> OBSESIÓN
+      </h1>
+      <div style={{ width: "200px", height: "4px", backgroundColor: "#FF2A6D", marginBottom: 40, boxShadow: "0 0 15px #FF2A6D" }} />
+
+      {/* --- ZONA 1: MONITORES / GRÁFICAS SUPERIORES --- */}
+      <div style={{ display: "flex", justifyContent: "space-between", width: "100%", gap: "20px", marginBottom: 70 }}>
+        
+        {/* Monitor Ego */}
+        <div style={{ flex: 1, backgroundColor: "#141422", borderRadius: 16, padding: "20px 10px", border: "2px solid #FF2A6D", textAlign: "center" }}>
+          <span style={{ fontSize: 20, fontWeight: "900", color: "#FF2A6D" }}>EGO</span>
+          <div style={{ height: "90px", marginTop: 15, position: "relative", borderBottom: "2px solid #333", borderLeft: "2px solid #333" }}>
+            {/* Línea simulada de gráfico que sube y cae */}
+            <svg width="100%" height="100%" style={{ position: "absolute", left: 0, bottom: 0 }}>
+              <path d={`M 0 70 Q 50 10 100 85`} fill="none" stroke="#FF2A6D" strokeWidth="4" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Monitor Motivación */}
+        <div style={{ flex: 1, backgroundColor: "#141422", borderRadius: 16, padding: "20px 10px", border: "2px solid #FFD700", textAlign: "center" }}>
+          <span style={{ fontSize: 20, fontWeight: "900", color: "#FFD700" }}>MOTIVACIÓN</span>
+          <div style={{ height: "90px", marginTop: 15, position: "relative", borderBottom: "2px solid #333", borderLeft: "2px solid #333" }}>
+            <svg width="100%" height="100%" style={{ position: "absolute", left: 0, bottom: 0 }}>
+              <path d={`M 0 60 Q 50 30 100 90`} fill="none" stroke="#FFD700" strokeWidth="4" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Monitor Obsesión */}
+        <div style={{ flex: 1, backgroundColor: "#141422", borderRadius: 16, padding: "20px 10px", border: "2px solid #05D9E8", textAlign: "center" }}>
+          <span style={{ fontSize: 20, fontWeight: "900", color: "#05D9E8" }}>OBSESIÓN</span>
+          <div style={{ height: "90px", marginTop: 15, position: "relative", borderBottom: "2px solid #333", borderLeft: "2px solid #333" }}>
+            <svg width="100%" height="100%" style={{ position: "absolute", left: 0, bottom: 0 }}>
+              <path d={`M 0 85 Q 50 50 100 10`} fill="none" stroke="#05D9E8" strokeWidth="4" />
+            </svg>
+          </div>
+        </div>
+
       </div>
 
-      {/* ESCENA 2 */}
-      <div style={{
-        position: "absolute",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: opacity2,
-        transform: `scale(${zoom2})`,
-        pointerEvents: "none",
-      }}>
-        <div style={{
-          background: "#FF2A6D", padding: "12px 35px",
-          fontSize: 24, borderRadius: 8, textTransform: "uppercase", fontWeight: "bold", color: "#FFF",
-          marginBottom: 20
-        }}>
-          🔴 Leonida / Vice City
+      {/* --- ZONA 2: LA OFICINA / ESTACIONES DE TRABAJO --- */}
+      <div style={{ flex: 1, width: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: "90px", paddingBottom: "100px" }}>
+        
+        {/* --- PERSONAJE 1: EGO --- */}
+        <div style={{ display: "flex", alignItems: "flex-end", position: "relative", transform: `rotate(${egoRecline}deg)`, transformOrigin: "bottom left", transition: "transform 0.2s" }}>
+          {/* Escritorio y PC */}
+          <div style={{ width: "220px", height: "140px", backgroundColor: "#1C1C2D", borderTop: "6px solid #FF2A6D", borderRadius: "8px 8px 0 0", position: "relative", display: "flex", justifyContent: "center", alignItems: "flex-start", paddingTop: "15px" }}>
+            <div style={{ width: "70px", height: "45px", backgroundColor: "#05D9E8", borderRadius: 4, boxShadow: "0 0 10px #05D9E8" }} />
+          </div>
+          {/* Silla y Stickman Arrogante */}
+          <div style={{ marginLeft: "-140px", marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ fontSize: 22, color: "#FF2A6D", fontWeight: "900", marginBottom: 5 }}>¡Genio! 😎</div>
+            <div style={{ width: "16px", height: "16px", borderRadius: "50%", backgroundColor: "#FFF", border: "3px solid #333" }} />
+            <div style={{ width: "6px", height: "55px", backgroundColor: "#FFF" }} />
+          </div>
+          {/* Dinero desperdiciado en el piso */}
+          {frame > 120 && (
+            <div style={{ position: "absolute", bottom: -20, left: 350, backgroundColor: "#2ecc71", padding: "8px 16px", borderRadius: 6, fontWeight: "900", color: "#000", fontSize: 18, boxShadow: "0 0 15px #2ecc71" }}>
+              💸 Gastado
+            </div>
+          )}
         </div>
-        <h1 style={{ fontSize: 80, color: "#05D9E8", textShadow: "0 0 30px rgba(5,217,232,0.8)", fontWeight: "900", margin: 0 }}>
-          MÁS VIVA QUE NUNCA
-        </h1>
-        <p style={{ fontSize: 32, color: "#FFF", opacity: 0.9, marginTop: 20, fontWeight: "bold" }}>
-          Redes sociales, caos y libertad absoluta
-        </p>
+
+        {/* --- PERSONAJE 2: MOTIVACIÓN --- */}
+        <div style={{ display: "flex", alignItems: "flex-end", position: "relative", opacity: motivationBattery === 0 ? 0.4 : 1 }}>
+          {/* Barra de batería flotante */}
+          <div style={{ position: "absolute", top: -50, left: 50, backgroundColor: "#111", border: "2px solid #FFD700", padding: "4px 12px", borderRadius: 8, fontSize: 18, fontWeight: "900", color: "#FFD700" }}>
+            🔋 {motivationBattery}%
+          </div>
+          {/* Escritorio y PC apagada */}
+          <div style={{ width: "220px", height: "140px", backgroundColor: "#1C1C2D", borderTop: "6px solid #FFD700", borderRadius: "8px 8px 0 0", position: "relative", display: "flex", justifyContent: "center", alignItems: "flex-start", paddingTop: "15px" }}>
+            <div style={{ width: "70px", height: "45px", backgroundColor: "#333", borderRadius: 4 }} />
+          </div>
+          {/* Stickman Cansado / Agotado */}
+          <div style={{ marginLeft: "-140px", marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ fontSize: "22px" }}>{motivationBattery === 0 ? "🕸️💤" : "💻💦"}</div>
+            <div style={{ width: "16px", height: "16px", borderRadius: "50%", backgroundColor: "#FFF", border: "3px solid #333", transform: motivationBattery === 0 ? "translateY(15px)" : "none" }} />
+            <div style={{ width: "6px", height: "55px", backgroundColor: "#FFF" }} />
+          </div>
+          {motivationBattery === 0 && (
+            <div style={{ position: "absolute", bottom: 10, left: 260, fontSize: 24, fontWeight: "900", color: "#888" }}>
+              Zzz... (Abandonó)
+            </div>
+          )}
+        </div>
+
+        {/* --- PERSONAJE 3: OBSESIÓN (IMPARABLE) --- */}
+        <div style={{ display: "flex", alignItems: "flex-end", position: "relative" }}>
+          {/* Escritorio y torre masiva de dinero que crece */}
+          <div style={{ width: "220px", height: "140px", backgroundColor: "#1C1C2D", borderTop: "6px solid #05D9E8", borderRadius: "8px 8px 0 0", position: "relative", display: "flex", justifyContent: "center", alignItems: "flex-start", paddingTop: "15px" }}>
+            <div style={{ width: "70px", height: "45px", backgroundColor: "#05D9E8", borderRadius: 4, boxShadow: "0 0 15px #05D9E8" }} />
+            {/* Torre de dinero apilada */}
+            <div style={{
+              position: "absolute",
+              bottom: "140px",
+              width: "110px",
+              height: `${obsessionMoneyHeight}px`,
+              backgroundColor: "#27ae60",
+              border: "3px solid #2ecc71",
+              borderRadius: "8px 8px 0 0",
+              boxShadow: "0 0 25px #2ecc71",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: 22,
+              fontWeight: "900",
+              color: "#FFF"
+            }}>
+              💰 MÁXIMO
+            </div>
+          </div>
+          {/* Stickman Trabajando sin parar */}
+          <div style={{ marginLeft: "-140px", marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ fontSize: 22, color: "#05D9E8", fontWeight: "900", marginBottom: 5 }}>⚡ IMPARABLE</div>
+            <div style={{ width: "16px", height: "16px", borderRadius: "50%", backgroundColor: "#FFF", border: "3px solid #333" }} />
+            <div style={{ width: "6px", height: "55px", backgroundColor: "#FFF" }} />
+          </div>
+        </div>
+
       </div>
 
-      {/* ESCENA 3 */}
-      <div style={{
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "row",
-        opacity: opacity3,
-        pointerEvents: "none",
-      }}>
-        <div style={{ flex: 1, background: "linear-gradient(135deg, rgba(255,42,109,0.35), #0B0B14)", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <h2 style={{ fontSize: 75, color: "#FF2A6D", fontWeight: "900", textShadow: "0 0 20px #FF2A6D" }}>LUCIA</h2>
-        </div>
-        <div style={{ flex: 1, background: "linear-gradient(225deg, rgba(5,217,232,0.35), #0B0B14)", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <h2 style={{ fontSize: 75, color: "#05D9E8", fontWeight: "900", textShadow: "0 0 20px #05D9E8" }}>JASON</h2>
-        </div>
-        <div style={{ position: "absolute", bottom: "70px", width: "100%", textAlign: "center" }}>
-          <span style={{ background: "#111", padding: "14px 35px", border: "2px solid #FF2A6D", fontSize: 28, borderRadius: 6, fontWeight: "bold", display: "inline-block" }}>
-            Físicas de Nueva Generación & 6 Estrellas
-          </span>
-        </div>
-      </div>
-
-      {/* ESCENA 4 */}
-      <div style={{
-        position: "absolute",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: opacity4,
-        transform: `scale(${scale4})`,
-        pointerEvents: "none",
-      }}>
-        <h2 style={{ fontSize: 42, color: "#05D9E8", letterSpacing: "6px", fontWeight: "bold", margin: 0 }}>
-          EL FENÓMENO DEL SIGLO
-        </h2>
-        <h1 style={{ fontSize: 120, color: "#FF2A6D", textShadow: "0 0 50px #FF2A6D", margin: "20px 0", fontWeight: "900" }}>
-          GTA VI
-        </h1>
-        <div style={{ background: "#FFF", color: "#0B0B14", padding: "15px 45px", borderRadius: 6, fontWeight: "900", fontSize: 34 }}>
-          19 DE NOVIEMBRE DE 2026
-        </div>
+      {/* --- BARRA DE PROGRESO INFERIOR --- */}
+      <div style={{ width: "100%", backgroundColor: "#141422", height: 16, borderRadius: 8, overflow: "hidden", border: "2px solid #222" }}>
+        <div style={{ width: `${graphProgress}%`, height: "100%", backgroundColor: "#05D9E8", boxShadow: "0 0 15px #05D9E8" }} />
       </div>
 
     </AbsoluteFill>
@@ -134,11 +167,11 @@ export const Root = () => {
   return (
     <Composition
       id="GTAVI-HypeVideo"
-      component={GTAVIHypeVideo}
-      durationInFrames={900}
+      component={ComparisonVideo}
+      durationInFrames={500}
       fps={30}
-      width={1920}
-      height={1080}
+      width={1080}
+      height={1920}
     />
   );
 };
